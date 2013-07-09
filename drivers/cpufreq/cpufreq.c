@@ -573,8 +573,11 @@ static ssize_t store_##file_name					\
 	    || new_policy.max < new_policy.user_policy.min)		\
 		return -EINVAL;						\
 									\
-	policy->user_policy.object = new_policy.object;			\
+	ret = cpufreq_driver->verify(&new_policy);			\
+	if (ret)							\
+		pr_err("cpufreq: Frequency verification failed\n");	\
 									\
+	policy->user_policy.object = new_policy.object;			\
 	ret = cpufreq_set_policy(policy, &new_policy);			\
 	if (ret)							\
 		pr_warn("User policy not enforced yet!\n");		\
