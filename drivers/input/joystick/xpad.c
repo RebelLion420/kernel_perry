@@ -345,7 +345,7 @@ struct usb_xpad {
 	int xtype;			/* type of xbox device */
 	int pad_nr;			/* the order x360 pads were attached */
 	const char *name;		/* name of the device */
-	unsigned long led_no;		/* led to lit on xbox360 controllers */
+	unsigned long pad_nr;		/* the order x360 pads were attached */
 };
 
 /*
@@ -993,9 +993,9 @@ static int xpad_led_probe(struct usb_xpad *xpad)
 		error = xpad->pad_nr;
 		goto err_free_mem;
 	}
-	xpad->led_no = atomic_inc_return(&led_seq);
+	xpad->pad_nr = atomic_inc_return(&led_seq);
 
-	snprintf(led->name, sizeof(led->name), "xpad%lu", xpad->led_no);
+	snprintf(led->name, sizeof(led->name), "xpad%lu", xpad->pad_nr);
 	led->xpad = xpad;
 
 	led_cdev = &led->led_cdev;
