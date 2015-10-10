@@ -345,6 +345,7 @@ struct usb_xpad {
 	int xtype;			/* type of xbox device */
 	const char *name;		/* name of the device */
 	int pad_nr;			/* the order x360 pads were attached */
+	const char *name;		/* name of the device */
 };
 
 /*
@@ -1204,6 +1205,16 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
 			break;
 	}
 
+	if (xpad_device[i].xtype == XTYPE_XBOXONE &&
+	    intf->cur_altsetting->desc.bInterfaceNumber != 0) {
+		/*
+		 * The Xbox One controller lists three interfaces all with the
+		 * same interface class, subclass and protocol. Differentiate by
+		 * interface number.
+		 */
+		return -ENODEV;
+	}
+
 	xpad = kzalloc(sizeof(struct usb_xpad), GFP_KERNEL);
 	if (!xpad)
 		return -ENOMEM;
@@ -1293,7 +1304,7 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
 		xpad->irq_in->dev = xpad->udev;
 		error = usb_submit_urb(xpad->irq_in, GFP_KERNEL);
 		if (error)
-			goto fail7;
+			goto err_deinit_input;
 	}
 
 		/*
