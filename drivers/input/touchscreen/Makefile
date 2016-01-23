@@ -97,3 +97,4 @@ obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE_MMI) += synaptics_dsx_fw_update
 obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT_MMI)	+= atmel_mxt_ts_mmi.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_CTRL_ACCESS_BLK) += synaptics_dsx_control_access_block.o
 obj-$(CONFIG_STATE_NOTIFIER)		+= state_notifier.o
+obj-$(CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE) += doubletap2wake.o
