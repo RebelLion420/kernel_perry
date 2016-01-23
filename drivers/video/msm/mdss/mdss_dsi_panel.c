@@ -34,6 +34,10 @@
 #include "mdss_dropbox.h"
 #include "mdss_debug.h"
 
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+#include <linux/input/doubletap2wake.h>
+#endif
+
 #define MDSS_PANEL_DEFAULT_VER 0xffffffffffffffff
 #define MDSS_PANEL_UNKNOWN_NAME "unknown"
 #define DT_CMD_HDR 6
@@ -967,6 +971,7 @@ u32 mdss_dsi_panel_forced_tx_mode_get(struct mdss_panel_info *pinfo)
 
 static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 {
+	
 	struct mdss_dsi_ctrl_pdata *ctrl = NULL;
 	struct mdss_panel_info *pinfo;
 	struct dsi_panel_cmds *on_cmds;
@@ -975,6 +980,12 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 	char *dropbox_issue = NULL;
 	static int dropbox_count;
 	static int panel_recovery_retry;
+	
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	bool prevent_sleep = (dt2w_switch > 0);
+	if (prevent_sleep && in_phone_call)
+		prevent_sleep = false;
+#endif
 
 	if (pdata == NULL) {
 		pr_err("%s: Invalid input data\n", __func__);
@@ -1063,6 +1074,11 @@ end:
 	else
 		pr_info("%s[%d]-.\n", __func__, ctrl->ndx);
 
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	if (prevent_sleep) {
+	dt2w_scr_suspended = false;
+	}
+#endif
 	pr_debug("%s:-\n", __func__);
 	return ret;
 }
@@ -1110,6 +1126,12 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 {
 	struct mdss_dsi_ctrl_pdata *ctrl = NULL;
 	struct mdss_panel_info *pinfo;
+	
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	bool prevent_sleep = (dt2w_switch > 0);
+	if (prevent_sleep && in_phone_call)
+		prevent_sleep = false;
+#endif	
 
 	if (pdata == NULL) {
 		pr_err("%s: Invalid input data\n", __func__);
@@ -1146,6 +1168,11 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 
 end:
 	pr_debug("%s:-\n", __func__);
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+	if (prevent_sleep) {
+	dt2w_scr_suspended = true;
+	}
+#endif
 	return 0;
 }
 

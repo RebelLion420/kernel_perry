@@ -1235,4 +1235,8 @@ config STATE_NOTIFIER
         bool "State Notifier"
 	default y
 
+config TOUCHSCREEN_DOUBLETAP2WAKE
+	tristate "DoubleTap2Wake for touchscreens"
+	default n
+
 endif
