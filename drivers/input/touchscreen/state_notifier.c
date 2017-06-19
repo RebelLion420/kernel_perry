@@ -1,7 +1,7 @@
 /*
  * State Notifier Driver
  *
- * Copyright (c) 2013-2016, Pranav Vashi <neobuddy89@gmail.com>
+ * Copyright (c) 2013-2017, Pranav Vashi <neobuddy89@gmail.com>
  *           (c) 2017, Joe Maples <joe@frap129.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -156,7 +156,9 @@ static int __init state_notifier_init(void)
 		pr_err("Failed to register FB notifier callback for state notifier.\n");
 
 	susp_wq =
-	    alloc_workqueue("state_susp_wq", WQ_HIGHPRI, 0);
+	    alloc_workqueue("state_susp_wq",
+			    WQ_HIGHPRI | WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
+
 	if (!susp_wq)
 		pr_err("State Notifier failed to allocate suspend workqueue\n");
 
