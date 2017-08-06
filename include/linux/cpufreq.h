@@ -512,6 +512,19 @@ extern struct cpufreq_governor cpufreq_gov_interactive;
 #endif
 
 /*********************************************************************
+ *                     CPUFREQ 2.6. INTERFACE                        *
+ *********************************************************************/
+
+#ifdef CONFIG_CPU_FREQ
+int cpufreq_get_user_max(void);
+#else
+static inline int cpufreq_get_user_max(void)
+{
+	return 0;
+}
+#endif
+
+/*********************************************************************
  *                     FREQUENCY TABLE HELPERS                       *
  *********************************************************************/
 
