@@ -671,6 +671,8 @@ static void async_resume_early(void *data, async_cookie_t cookie)
 	put_device(dev);
 }
 
+extern void print_active_wakeup_sources(void);
+
 /**
  * dpm_resume_early - Execute "early resume" callbacks for all devices.
  * @state: PM transition of the system being carried out.
@@ -680,7 +682,12 @@ void dpm_resume_early(pm_message_t state)
 	struct device *dev;
 	ktime_t starttime = ktime_get();
 
+#ifdef CONFIG_BOEFFLA_WL_BLOCKER
+	print_active_wakeup_sources();
+#endif
+
 	trace_suspend_resume(TPS("dpm_resume_early"), state.event, true);
+
 	mutex_lock(&dpm_list_mtx);
 	pm_transition = state;
 
@@ -854,10 +861,6 @@ void dpm_resume(pm_message_t state)
 
 	trace_suspend_resume(TPS("dpm_resume"), state.event, true);
 	might_sleep();
-
-#ifdef CONFIG_BOEFFLA_WL_BLOCKER
-	pm_print_active_wakeup_sources();
-#endif
 
 	mutex_lock(&dpm_list_mtx);
 	pm_transition = state;
