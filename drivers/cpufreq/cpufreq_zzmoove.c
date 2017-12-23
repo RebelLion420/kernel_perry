@@ -3065,9 +3065,10 @@ static ssize_t store_sampling_rate_idle_delay(struct kobject *a, struct attribut
 #endif /* ENABLE_PROFILES_SUPPORT */
 	    return -EINVAL;
 
-	if (input == 0)
+	if (input == 0) {
 	    sampling_rate_step_up_delay = 0;
 	    sampling_rate_step_down_delay = 0;
+	}
 
 #ifdef ENABLE_PROFILES_SUPPORT
 	// ZZ: set profile number to 0 and profile name to custom mode if value has changed
@@ -7801,19 +7802,19 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		this_dbs_info->down_skip = 0;
 
 		// ZZ: Frequency Limit: if we are at freq_limit break out early
-		if (dbs_tuners_ins.freq_limit != 0
-			&& policy->cur == dbs_tuners_ins.freq_limit) {
+	    if (dbs_tuners_ins.freq_limit != 0
+		    && policy->cur == dbs_tuners_ins.freq_limit) {
 #ifdef ENABLE_MUSIC_LIMITS
-			// ff: but what if the music max freq wants to take over?
-			if (suspend_flag && dbs_tuners_ins.music_max_freq && dbs_tuners_ins.music_state && policy->cur < dbs_tuners_ins.music_max_freq) {
-				// ff: this is ugly, but this IF is so much easier like this.
-			} else {
-				return;
-			}
+		    // ff: but what if the music max freq wants to take over?
+		    if (suspend_flag && dbs_tuners_ins.music_max_freq && dbs_tuners_ins.music_state && policy->cur < dbs_tuners_ins.music_max_freq) {
+			    // ff: this is ugly, but this IF is so much easier like this.
+		    } else {
+			    return;
+		    }
 #else
-				return;
+			    return;
 #endif /* ENABLE_MUSIC_LIMITS */
-		}
+	    }
 
 	    // if we are already at full speed then break out early but not if freq limit is set
 	    if (policy->cur == policy->max && dbs_tuners_ins.freq_limit == 0)	// ZZ: changed check from reqested_freq to current freq (DerTeufel1980)
@@ -7823,27 +7824,27 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 	    if (zz_sampling_down_max_mom != 0 && policy->cur < policy->max)
 		this_dbs_info->rate_mult = zz_sampling_down_factor;
 
-		this_dbs_info->requested_freq = zz_get_next_freq(policy->cur, 1, max_load);
+	    this_dbs_info->requested_freq = zz_get_next_freq(policy->cur, 1, max_load);
 
-		if (dbs_tuners_ins.freq_limit != 0
-			&& this_dbs_info->requested_freq > dbs_tuners_ins.freq_limit) {
+	    if (dbs_tuners_ins.freq_limit != 0
+		    && this_dbs_info->requested_freq > dbs_tuners_ins.freq_limit) {
 #ifdef ENABLE_MUSIC_LIMITS
-			// ff: right now we normally would let the freq_limit snub this, but we have to see if music needs to take over
-			if (suspend_flag && dbs_tuners_ins.music_max_freq && dbs_tuners_ins.music_state) {
-				// ff: screen is off, music freq is set, and music is playing.
+		    // ff: right now we normally would let the freq_limit snub this, but we have to see if music needs to take over
+		    if (suspend_flag && dbs_tuners_ins.music_max_freq && dbs_tuners_ins.music_state) {
+			    // ff: screen is off, music freq is set, and music is playing.
 
-				// ff: make sure we haven't exceeded the music freq.
-				if (this_dbs_info->requested_freq > dbs_tuners_ins.music_max_freq) {
-					this_dbs_info->requested_freq = dbs_tuners_ins.music_max_freq;
-				}
+			    // ff: make sure we haven't exceeded the music freq.
+			    if (this_dbs_info->requested_freq > dbs_tuners_ins.music_max_freq) {
+				    this_dbs_info->requested_freq = dbs_tuners_ins.music_max_freq;
+			    }
 
-			} else {
-				this_dbs_info->requested_freq = dbs_tuners_ins.freq_limit;
-			}
+		    } else {
+			    this_dbs_info->requested_freq = dbs_tuners_ins.freq_limit;
+		    }
 #else
-				this_dbs_info->requested_freq = dbs_tuners_ins.freq_limit;
+			    this_dbs_info->requested_freq = dbs_tuners_ins.freq_limit;
 #endif /* ENABLE_MUSIC_LIMITS */
-		}
+	    }
 
 #ifdef ENABLE_INPUTBOOSTER
 		if (flg_ctr_inputboost_punch > 0 && this_dbs_info->requested_freq < dbs_tuners_ins.inputboost_punch_freq) {
@@ -8858,25 +8859,25 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		    if (latency == 0)
 			latency = 1;
 
-			rc = sysfs_create_group(cpufreq_global_kobject,
-						&dbs_attr_group);
-			if (rc) {
-			    mutex_unlock(&dbs_mutex);
-			    return rc;
-			}
+		    rc = sysfs_create_group(cpufreq_global_kobject,
+					    &dbs_attr_group);
+		    if (rc) {
+		        mutex_unlock(&dbs_mutex);
+		        return rc;
+		    }
 
-			/*
-			 * conservative does not implement micro like ondemand
-			 * governor, thus we are bound to jiffes/HZ
-			 */
-			min_sampling_rate =
-				MIN_SAMPLING_RATE_RATIO * jiffies_to_usecs(3);
-			// Bring kernel and HW constraints together
-			min_sampling_rate = max(min_sampling_rate,
-					MIN_LATENCY_MULTIPLIER * latency);
-			dbs_tuners_ins.sampling_rate_current =
-				max(min_sampling_rate,
-				    latency * LATENCY_MULTIPLIER);
+		    /*
+		     * conservative does not implement micro like ondemand
+		     * governor, thus we are bound to jiffes/HZ
+		     */
+		    min_sampling_rate =
+			    MIN_SAMPLING_RATE_RATIO * jiffies_to_usecs(3);
+		    // Bring kernel and HW constraints together
+		    min_sampling_rate = max(min_sampling_rate,
+				    MIN_LATENCY_MULTIPLIER * latency);
+		    dbs_tuners_ins.sampling_rate_current =
+			    max(min_sampling_rate,
+			        latency * LATENCY_MULTIPLIER);
 #ifdef ENABLE_PROFILES_SUPPORT
 #if (DEF_PROFILE_NUMBER > 0)
 			set_profile(DEF_PROFILE_NUMBER);
