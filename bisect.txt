@@ -1,0 +1,15 @@
+[dd26053862ffccbe8b384f9281d5c283d3675f22] xen/pirq: fix error path cleanup when binding MSIs
+
+[31c9d1666bdeb1b1bec474462ac6f184edd54848] nfs: Do not convert nfs_idmap_cache_timeout to jiffies
+
+[23a82da3b6f195fca280873e1ec5a627b2951a56] powerpc: Don't preempt_disable() in show_cpuinfo()
+
+[859ca440571713ae5e6f1cd42592b6c2c82d3e0f] sctp: fix the issue that the cookie-ack with auth can't get processed
+
+[65c951ac4e155582ce995ff807e4f0ef14d19825] net/mlx4_en: Verify coalescing parameters are in range
+
+[d9a84cb70945bb711912ed223f877f8573ad351f] dccp: fix tasklet usage
+
+[fda28691304728553f58536ba8e8bb50151a7880] bridge: check iface upper dev when setting master via ioctl
+
+[18622ae618cc4cf0b9cefaefc66aa41c7a12d11a] 8139too: Use disable_irq_nosync() in rtl8139_poll_controller()
