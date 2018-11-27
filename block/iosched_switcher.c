@@ -20,6 +20,7 @@
 #include <linux/state_notifier.h>
 
 #define NOOP_IOSCHED "noop"
+#define FORCE_IOSCHED "maple"
 #define RESTORE_DELAY_MS (10000)
 
 struct req_queue_data {
@@ -50,7 +51,14 @@ static void change_elevator(struct req_queue_data *r, bool use_noop)
 		strcpy(r->prev_e, q->elevator->type->elevator_name);
 		elevator_change(q, NOOP_IOSCHED);
 	} else {
-		elevator_change(q, r->prev_e);
+		if (FORCE_IOSCHED == "")
+		{
+			elevator_change(q, r->prev_e);
+		}
+		else
+		{
+			elevator_change(q, FORCE_IOSCHED);
+		}
 	}
 }
 
