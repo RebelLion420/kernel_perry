@@ -101,3 +101,5 @@ all.config
 out
 build.sh
 linux-stable.sh
+64build.sh
+*.diff
