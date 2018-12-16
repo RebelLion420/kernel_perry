@@ -848,6 +848,12 @@ config MSM_PERFORMANCE_HOTPLUG_ON
 	  compile out the nodes needed for core-control functionality through
 	  msm_performance.
 
+config ALUCARD_CONTROL
+	bool "Alucard"
+	depends on HOTPLUG_CPU && SMP
+	help
+	  Known for being battery friendly. Developed by Alucard_24@XDA 
+
 config MSM_POWER
 	tristate "Power driver to manage system resources"
 	help
