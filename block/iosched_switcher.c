@@ -51,7 +51,7 @@ static void change_elevator(struct req_queue_data *r, bool use_noop)
 		strcpy(r->prev_e, q->elevator->type->elevator_name);
 		elevator_change(q, NOOP_IOSCHED);
 	} else {
-		if (FORCE_IOSCHED == "")
+		if (strlen(FORCE_IOSCHED) == 0)
 		{
 			elevator_change(q, r->prev_e);
 		}
