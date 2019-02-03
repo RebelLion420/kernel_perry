@@ -52,6 +52,7 @@ struct q6core_str {
 						cmdrsp_license_result;
 	} cmd_resp_payload;
 	u32 param;
+	u32 q6_core_avs_version;
 	struct cal_type_data *cal_data[CORE_MAX_CAL];
 	uint32_t mem_map_cal_handle;
 	int32_t adsp_status;
