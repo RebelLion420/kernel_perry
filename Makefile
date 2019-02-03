@@ -626,6 +626,10 @@ endif
 # Tell gcc to never replace conditional load with a non-conditional one
 KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
 
+# Drop string and format truncation warnings (that's what we want to do)
+KBUILD_CFLAGS   += $(call cc-option,-Wno-format-truncation,)
+KBUILD_CFLAGS   += $(call cc-option,-Wno-stringop-truncation,)
+
 ifdef CONFIG_READABLE_ASM
 # Disable optimizations that make assembler listings hard to read.
 # reorder blocks reorders the control in the function
