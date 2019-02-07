@@ -588,7 +588,6 @@ struct usb_xpad {
 	int xtype;			/* type of xbox device */
 	const char *name;		/* name of the device */
 	int pad_nr;			/* the order x360 pads were attached */
-	const char *name;		/* name of the device */
 	struct work_struct work;	/* init/remove device from callback */
 };
 
@@ -1842,18 +1841,6 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
 		error = xpad_init_input(xpad);
 		if (error)
 			goto err_deinit_output;
-	}
-
-		/*
-		 * Send presence packet.
-		 * This will force the controller to resend connection packets.
-		 * This is useful in the case we activate the module after the
-		 * adapter has been plugged in, as it won't automatically
-		 * send us info about the controllers.
-		 */
-		error = xpad_inquiry_pad_presence(xpad);
-		if (error)
-			goto err_kill_in_urb;
 	}
 	return 0;
 
