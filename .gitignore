@@ -96,3 +96,9 @@ x509.genkey
 
 # Kconfig presets
 all.config
+
+# Custom additions
+build.sh
+linux-stable.sh
+buildlog.txt
+errors.txt
