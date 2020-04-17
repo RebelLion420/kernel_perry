@@ -56,4 +56,4 @@ workflows:
             branches:
               only:
                 - cm-14.1
-                - test/*
+                - test/als
