@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/kernel_perry
     docker:
-    - image: gaigecarlos/kbld:200315
+    - image: gaigecarlos/kbld:200420
       auth:
         username: gaigecarlos
         password: $DOCKER_PASSWORD
