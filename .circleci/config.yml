@@ -56,4 +56,5 @@ workflows:
               only:
                 - cm-14.1
                 - test/als
+                - test/caf
                 - test/redo
