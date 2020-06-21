@@ -469,7 +469,6 @@ config DM_ANDROID_VERITY
 	  in the system keyring. Upon success, the underlying verity
 	  target is setup.
 
->>>>>>> 79b1d8d56228a991026b72728e61631177c1d42a
 config DM_VERITY_FEC
 	bool "Verity forward error correction support"
 	depends on DM_VERITY

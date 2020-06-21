@@ -306,15 +306,6 @@ enum migrate_types {
 
 extern const char *migrate_type_names[];
 
-enum task_event {
-	PUT_PREV_TASK   = 0,
-	PICK_NEXT_TASK  = 1,
-	TASK_WAKE       = 2,
-	TASK_MIGRATE    = 3,
-	TASK_UPDATE     = 4,
-	IRQ_UPDATE	= 5,
-};
-
 #include <linux/spinlock.h>
 
 /*
