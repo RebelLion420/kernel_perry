@@ -501,6 +501,7 @@ int usb_driver_claim_interface(struct usb_driver *driver,
 	struct device *dev;
 	struct usb_device *udev;
 	int retval = 0;
+	int lpm_disable_error = -ENODEV;
 
 	if (!iface)
 		return -ENODEV;
@@ -516,6 +517,16 @@ int usb_driver_claim_interface(struct usb_driver *driver,
 	iface->needs_binding = 0;
 
 	iface->condition = USB_INTERFACE_BOUND;
+
+	/* See the comment about disabling LPM in usb_probe_interface(). */
+	if (driver->disable_hub_initiated_lpm) {
+		lpm_disable_error = usb_unlocked_disable_lpm(udev);
+		if (lpm_disable_error) {
+			dev_err(&iface->dev, "%s Failed to disable LPM for driver %s\n.",
+					__func__, driver->name);
+			return -ENOMEM;
+		}
+	}
 
 	/* Claimed interfaces are initially inactive (suspended) and
 	 * runtime-PM-enabled, but only if the driver has autosuspend

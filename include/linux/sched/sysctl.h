@@ -92,6 +92,16 @@ extern unsigned int sysctl_sched_freq_aggregate_threshold_pct;
 #define sysctl_sched_enable_hmp_task_placement 0
 
 #endif /* CONFIG_SCHED_HMP */
+extern unsigned int sysctl_sched_is_big_little;
+extern unsigned int sysctl_sched_sync_hint_enable;
+extern unsigned int sysctl_sched_initial_task_util;
+extern unsigned int sysctl_sched_cstate_aware;
+#ifdef CONFIG_SCHED_WALT
+extern unsigned int sysctl_sched_use_walt_cpu_util;
+extern unsigned int sysctl_sched_use_walt_task_util;
+extern unsigned int sysctl_sched_walt_init_task_load_pct;
+extern unsigned int sysctl_sched_walt_cpu_high_irqload;
+#endif
 
 enum sched_tunable_scaling {
 	SCHED_TUNABLESCALING_NONE,
@@ -153,6 +163,22 @@ extern int sysctl_sched_rt_runtime;
 
 #ifdef CONFIG_CFS_BANDWIDTH
 extern unsigned int sysctl_sched_cfs_bandwidth_slice;
+#endif
+
+#ifdef CONFIG_SCHED_TUNE
+extern int sysctl_sched_cfs_boost;
+int sysctl_sched_cfs_boost_handler(struct ctl_table *table, int write,
+				   void __user *buffer, size_t *length,
+				   loff_t *ppos);
+static inline int get_sysctl_sched_cfs_boost(void)
+{
+	return sysctl_sched_cfs_boost;
+}
+#else
+static inline int get_sysctl_sched_cfs_boost(void)
+{
+	return 0;
+}
 #endif
 
 #ifdef CONFIG_SCHED_AUTOGROUP

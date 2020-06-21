@@ -640,6 +640,9 @@ static inline int fault_in_multipages_readable(const char __user *uaddr,
 	if (unlikely(uaddr > end))
 		return -EFAULT;
 
+	if (unlikely(uaddr > end))
+		return -EFAULT;
+
 	do {
 		if (unlikely(__get_user(c, uaddr) != 0))
 			return -EFAULT;

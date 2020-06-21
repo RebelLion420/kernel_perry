@@ -117,8 +117,10 @@ ENTRY(secondary_startup)
  ARM(	add	pc, r10, #PROCINFO_INITFUNC	)
  THUMB(	add	r12, r10, #PROCINFO_INITFUNC	)
  THUMB(	ret	r12				)
-1:	bl	__after_proc_init
-	ldr	sp, [r7, #8]			@ set up the stack pointer
+ENDPROC(secondary_startup)
+
+ENTRY(__secondary_switched)
+	ldr	sp, [r7, #12]			@ set up the stack pointer
 	mov	fp, #0
 	b	secondary_start_kernel
 ENDPROC(secondary_startup)

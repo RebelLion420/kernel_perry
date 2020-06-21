@@ -1155,6 +1155,11 @@ static void change_pageblock_range(struct page *pageblock_page,
  * as fragmentation caused by those allocations polluting movable pageblocks
  * is worse than movable allocations stealing from unmovable and reclaimable
  * pageblocks.
+ *
+ * If we claim more than half of the pageblock, change pageblock's migratetype
+ * as well.
+ * Returns the allocation migratetype if free pages were stolen, or the
+ * fallback migratetype if it was decided not to steal.
  */
 static bool can_steal_fallback(unsigned int order, int start_mt)
 {
@@ -1227,6 +1232,12 @@ static int find_suitable_fallback(struct free_area *area, unsigned int order,
 			*can_steal = true;
 
 		return fallback_mt;
+
+		/* Claim the whole block if over half of it is free */
+		if (pages >= (1 << (pageblock_order-1)) ||
+				page_group_by_mobility_disabled)
+			set_pageblock_migratetype(page, start_type);
+		return start_type;
 	}
 
 	return -1;

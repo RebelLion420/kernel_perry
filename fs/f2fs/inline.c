@@ -12,6 +12,7 @@
 #include <linux/f2fs_fs.h>
 
 #include "f2fs.h"
+#include <trace/events/android_fs.h>
 
 bool f2fs_may_inline_data(struct inode *inode)
 {
@@ -82,9 +83,10 @@ bool truncate_inline_inode(struct page *ipage, u64 from)
 int f2fs_read_inline_data(struct inode *inode, struct page *page)
 {
 	struct page *ipage;
-
 	ipage = get_node_page(F2FS_I_SB(inode), inode->i_ino);
 	if (IS_ERR(ipage)) {
+		trace_android_fs_dataread_end(inode, page_offset(page),
+					      PAGE_SIZE);
 		unlock_page(page);
 		return PTR_ERR(ipage);
 	}
@@ -94,11 +96,24 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
 		return -EAGAIN;
 	}
 
+	if (trace_android_fs_dataread_start_enabled()) {
+		char *path, pathbuf[MAX_TRACE_PATHBUF_LEN];
+
+		path = android_fstrace_get_pathname(pathbuf,
+						    MAX_TRACE_PATHBUF_LEN,
+						    inode);
+		trace_android_fs_dataread_start(inode, page_offset(page),
+						PAGE_SIZE, current->pid,
+						path, current->comm);
+	}
+
 	if (page->index)
 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
 	else
 		read_inline_data(page, ipage);
 
+out:
+	trace_android_fs_dataread_end(inode, page_offset(page), PAGE_SIZE);
 	SetPageUptodate(page);
 	f2fs_put_page(ipage, 1);
 	unlock_page(page);

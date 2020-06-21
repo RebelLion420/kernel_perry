@@ -292,8 +292,8 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
 			return -EIO;
 
 		len -= slen;
-		if (!ovl_can_list(s)) {
-			res -= slen;
+		if (ovl_is_private_xattr(s)) {
+        res -= slen;
 			memmove(s, s + slen, len);
 		} else {
 			s += slen;

@@ -33,7 +33,6 @@
 #include "core.h"
 #include "host.h"
 
-#define cls_dev_to_mmc_host(d)	container_of(d, struct mmc_host, class_dev)
 #define MMC_DEVFRQ_DEFAULT_UP_THRESHOLD 35
 #define MMC_DEVFRQ_DEFAULT_DOWN_THRESHOLD 5
 #define MMC_DEVFRQ_DEFAULT_POLLING_MSEC 100
@@ -802,6 +801,9 @@ int mmc_add_host(struct mmc_host *host)
 		pr_err("%s: failed to create sysfs group with err %d\n",
 							 __func__, err);
 
+#ifdef CONFIG_BLOCK
+	mmc_latency_hist_sysfs_init(host);
+#endif
 	mmc_start_host(host);
 	if (!(host->pm_flags & MMC_PM_IGNORE_PM_NOTIFY))
 		register_pm_notifier(&host->pm_notify);
@@ -831,6 +833,9 @@ void mmc_remove_host(struct mmc_host *host)
 #endif
 	sysfs_remove_group(&host->parent->kobj, &dev_attr_grp);
 	sysfs_remove_group(&host->class_dev.kobj, &clk_scaling_attr_grp);
+#ifdef CONFIG_BLOCK
+	mmc_latency_hist_sysfs_exit(host);
+#endif
 
 	device_del(&host->class_dev);
 

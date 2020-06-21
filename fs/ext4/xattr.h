@@ -23,6 +23,7 @@
 #define EXT4_XATTR_INDEX_SECURITY	        6
 #define EXT4_XATTR_INDEX_SYSTEM			7
 #define EXT4_XATTR_INDEX_RICHACL		8
+#define EXT4_XATTR_INDEX_ENCRYPTION		9
 
 struct ext4_xattr_header {
 	__le32	h_magic;	/* magic number for identification */
@@ -129,6 +130,8 @@ static inline void ext4_write_unlock_xattr(struct inode *inode, int *save)
 		ext4_clear_inode_state(inode, EXT4_STATE_NO_EXPAND);
 	up_write(&EXT4_I(inode)->xattr_sem);
 }
+
+#define EXT4_XATTR_NAME_ENCRYPTION_CONTEXT "c"
 
 extern ssize_t ext4_listxattr(struct dentry *, char *, size_t);
 

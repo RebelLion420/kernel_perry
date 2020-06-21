@@ -490,6 +490,9 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
 	if (PageAnon(page))
 		mss->anonymous += size;
 
+	if (PageAnon(page))
+		mss->anonymous += size;
+
 	mss->resident += size;
 	/* Accumulate the size in pages that have been accessed. */
 	if (young || PageReferenced(page))
@@ -555,6 +558,29 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 
 	smaps_account(mss, page, PAGE_SIZE, pte_young(*pte), pte_dirty(*pte));
 }
+
+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+		struct mm_walk *walk)
+{
+	struct mem_size_stats *mss = walk->private;
+	struct vm_area_struct *vma = mss->vma;
+	struct page *page;
+
+	/* FOLL_DUMP will return -EFAULT on huge zero page */
+	page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
+	if (IS_ERR_OR_NULL(page))
+		return;
+	mss->anonymous_thp += HPAGE_PMD_SIZE;
+	smaps_account(mss, page, HPAGE_PMD_SIZE,
+			pmd_young(*pmd), pmd_dirty(*pmd));
+}
+#else
+static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+		struct mm_walk *walk)
+{
+}
+#endif
 
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
