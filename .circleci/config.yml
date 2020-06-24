@@ -57,3 +57,4 @@ workflows:
                 - test/als
                 - test/caf
                 - test/redo
+                - test/f2fs
