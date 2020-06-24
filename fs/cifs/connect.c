@@ -429,8 +429,7 @@ cifs_echo_request(struct work_struct *work)
 	 */
 
 	if (server->tcpStatus == CifsNeedReconnect ||
-	    server->tcpStatus == CifsExiting ||
-	    server->tcpStatus == CifsNew ||
+	    server->tcpStatus == CifsExiting || server->tcpStatus == CifsNew ||
 	    (server->ops->can_echo && !server->ops->can_echo(server)) ||
 	    time_before(jiffies, server->lstrp + echo_interval - HZ))
 		goto requeue_echo;

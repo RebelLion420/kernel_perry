@@ -445,7 +445,7 @@ int register_kmmio_probe(struct kmmio_probe *p)
 		goto out;
 	}
 
-	pte = lookup_address(addr, &l);
+	pte = lookup_address(p->addr, &l);
 	if (!pte) {
 		ret = -EINVAL;
 		goto out;
@@ -535,13 +535,13 @@ void unregister_kmmio_probe(struct kmmio_probe *p)
 	unsigned int l;
 	pte_t *pte;
 
-	pte = lookup_address(addr, &l);
+	pte = lookup_address(p->addr, &l);
 	if (!pte)
 		return;
 
 	spin_lock_irqsave(&kmmio_lock, flags);
 	while (size < size_lim) {
-		release_kmmio_fault_page(addr + size, &release_list);
+		release_kmmio_fault_page(p->addr + size, &release_list);
 		size += page_level_size(l);
 	}
 	list_del_rcu(&p->list);

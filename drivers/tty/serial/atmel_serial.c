@@ -1875,6 +1875,15 @@ static void atmel_shutdown(struct uart_port *port)
 	atmel_port->ms_irq_enabled = false;
 
 	atmel_flush_buffer(port);
+	if (atmel_use_pdc_tx(port)) {
+		UART_PUT_TCR(port, 0);
+		atmel_port->pdc_tx.ofs = 0;
+	}
+	/*
+	 * in uart_flush_buffer(), the xmit circular buffer has just
+	 * been cleared, so we have to reset tx_len accordingly.
+	 */
+	sg_dma_len(&atmel_port->sg_tx) = 0;
 }
 
 /*

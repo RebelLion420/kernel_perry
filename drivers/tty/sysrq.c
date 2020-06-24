@@ -958,7 +958,6 @@ static bool sysrq_handler_registered;
 static inline void sysrq_register_handler(void)
 {
 	int error;
-
 	sysrq_of_get_keyreset_config();
 
 	error = input_register_handler(&sysrq_handler);

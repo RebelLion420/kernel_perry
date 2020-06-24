@@ -873,6 +873,8 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
 		VM_BUG_ON(pmd_pfn(old_pmd) != pmd_pfn(*new_pmd));
 
 		pmd_clear(pmd);
+	if (pmd_present(old_pmd)) {
+		pmd_clear(pmd);
 		kvm_tlb_flush_vmid_ipa(kvm, addr);
 	} else {
 		get_page(virt_to_page(pmd));
@@ -916,10 +918,6 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
 	/* Create 2nd stage page table mapping - Level 3 */
 	old_pte = *pte;
 	if (pte_present(old_pte)) {
-		/* Skip page table update if there is no change */
-		if (pte_val(old_pte) == pte_val(*new_pte))
-			return 0;
-
 		kvm_set_pte(pte, __pte(0));
 		kvm_tlb_flush_vmid_ipa(kvm, addr);
 	} else {
