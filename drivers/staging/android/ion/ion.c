@@ -470,17 +470,6 @@ static struct ion_handle *pass_to_user(struct ion_handle *handle)
 	return ret;
 }
 
-/* Must hold the client lock */
-static int user_ion_handle_put_nolock(struct ion_handle *handle)
-{
-	int ret = 0;
-
-	if (--handle->user_ref_count == 0)
-		ret = ion_handle_put_nolock(handle);
-
-	return ret;
-}
-
 static struct ion_handle *ion_handle_lookup(struct ion_client *client,
 					    struct ion_buffer *buffer)
 {
@@ -520,18 +509,6 @@ struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
 	handle = ion_handle_get_by_id_nolock(client, id);
 	mutex_unlock(&client->lock);
 		ion_handle_get(handle);
-
-	return handle;
-}
-
-struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
-						int id)
-{
-	struct ion_handle *handle;
-
-	mutex_lock(&client->lock);
-	handle = ion_handle_get_by_id_nolock(client, id);
-	mutex_unlock(&client->lock);
 
 	return handle;
 }
