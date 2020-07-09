@@ -13,17 +13,12 @@ jobs:
         command: git clone https://github.com/RebelLion420/AnyKernel3 -b perry ~/AK3
     - restore_cache:
         keys:
-        - src-{{ .Branch }}-{{ .Revision }}
         - src-{{ .Branch }}
     - checkout
     - save_cache:
-        key: src-{{ .Branch }}-{{ .Revision }}
+        key: src-{{ .Branch }}
         paths:
         - "/root/kernel_perry/.git"
-    - restore_cache:
-        keys:
-        - out-{{ .Branch }}-{{ .Revision }}
-        - out-{{ .Branch }}
     - run:
         name: Generating Config
         command: sudo make O=out ARCH=arm CROSS_COMPILE=~/toolchain/bin/arm-linux-gnueabi- perry_defconfig
@@ -33,10 +28,6 @@ jobs:
           sudo make O=out ARCH=arm SUBARCH=arm CROSS_COMPILE=~/toolchain/bin/arm-linux-gnueabi- -j$(nproc --all) zImage
           sudo make O=out ARCH=arm SUBARCH=arm CROSS_COMPILE=~/toolchain/bin/arm-linux-gnueabi- -j$(nproc --all) dtbs
           sudo make O=out ARCH=arm SUBARCH=arm CROSS_COMPILE=~/toolchain/bin/arm-linux-gnueabi- -j$(nproc --all) modules
-    - save_cache:
-        key: out-{{ .Branch }}-{{ .Revision }}
-        paths:
-        - "/root/kernel_perry/out"
     - run:
         name: Generating Kernel Zip
         command: |
